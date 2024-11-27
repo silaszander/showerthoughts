@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shower Thoughts</title>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: linear-gradient(135deg, #f06292, #ff80ab);
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            text-align: center;
+            overflow: hidden;
+            margin: 0;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .container {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 40px;
+            width: 100%;
+            max-width: 600px;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            font-weight: 500;
+            letter-spacing: 1px;
+        }
+
+        button {
+            padding: 15px 30px;
+            font-size: 18px;
+            font-weight: 500;
+            background-color: #ff4081;
+            border: none;
+            border-radius: 30px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+        }
+
+        button:hover {
+            background-color: #f50057;
+            transform: scale(1.1);
+        }
+
+        button:focus {
+            outline: none;
+        }
+
+        .thought {
+            font-size: 20px;
+            margin-top: 25px;
+            font-style: italic;
+            color: #fff;
+            letter-spacing: 0.5px;
+            padding: 15px;
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        .thought-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+        }
+
+        .pump-meter {
+            margin-top: 30px;
+            height: 20px;
+            width: 100%;
+            background-color: #ddd;
+            border-radius: 10px;
+        }
+
+        .pump-fill {
+            height: 100%;
+            width: 0%;
+            background-color: #ff4081;
+            border-radius: 10px;
+            transition: width 0.5s ease-in-out;
+        }
+
+        /* Shake effect */
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            50% { transform: translateX(10px); }
+            75% { transform: translateX(-10px); }
+            100% { transform: translateX(0); }
+        }
+
+        .shake {
+            animation: shake 0.3s ease-out;
+        }
+
+        /* Flashing background effect */
+        @keyframes flashBackground {
+            0% { background-color: #ff4081; }
+            50% { background-color: #ff80ab; }
+            100% { background-color: #ff4081; }
+        }
+
+        .flash-background {
+            animation: flashBackground 1s ease-out infinite;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Shower Thought</h1>
+        <div class="thought-container">
+            <button onclick="generateThought()">Press Me</button>
+        </div>
+        <div id="thought" class="thought">Click it till it pumps!</div>
+        <div class="pump-meter">
+            <div id="pump-fill" class="pump-fill"></div>
+        </div>
+    </div>
+
+    <script>
+        const showerThoughts = [
+            "If a tomato is a fruit, does that make ketchup a smoothie?",
+            "You never really own a pet, you just borrow them for a while.",
+            "Why do we drive on parkways and park on driveways?",
+            "Your stomach thinks all potatoes are mashed.",
+            "The fact that jellyfish have been around for 500 million years and we still don’t understand them is a little concerning.",
+            "The word 'swims' is the same upside down.",
+            "There’s no such thing as a ‘right’ way to eat a cupcake.",
+            "We don't eat cereal with milk; we eat milk with cereal.",
+            "Why do we call it a 'building' when it's already built?",
+            "We all have that one shirt that, when we wear it, we feel like we’re 'doing it right'."
+        ];
+
+        const pumpFill = document.getElementById('pump-fill');
+        let pumpLevel = 0;
+        let soundLevel = 0;
+
+        const sounds = [
+            new Audio('https://www.soundjay.com/button/beep-07.wav'),  // Basic sound
+            new Audio('https://www.soundjay.com/button/beep-08b.wav'),  // Medium sound
+            new Audio('https://www.soundjay.com/button/beep-09.wav')   // Hype sound
+        ];
+
+        function generateThought() {
+            const randomIndex = Math.floor(Math.random() * showerThoughts.length);
+            const thoughtElement = document.getElementById('thought');
+            const bodyElement = document.body;
+
+            // Fade out the thought to create a smooth transition
+            thoughtElement.style.opacity = 0;
+
+            setTimeout(() => {
+                thoughtElement.textContent = showerThoughts[randomIndex];
+                thoughtElement.style.opacity = 1;
+                changeBackgroundColor(); // Change background color after each click
+                increasePump();  // Increase the pump meter
+                playSound();     // Play increasing sound effect
+                shakeScreen(bodyElement);  // Shake the screen
+                if (pumpLevel === 100) {
+                    ultimatePump(bodyElement);  // Ultimate pump effect
+                }
+            }, 300);
+        }
+
+        // Function to change background colors dynamically
+        function changeBackgroundColor() {
+            const randomColor = `hsl(${Math.random() * 360}, 60%, 70%)`;
+            document.body.style.background = randomColor;
+        }
+
+        // Increase the pump meter progress
+        function increasePump() {
+            if (pumpLevel < 100) {
+                pumpLevel += 10; // Increase by 10% per click
+                pumpFill.style.width = `${pumpLevel}%`;
+            }
+        }
+
+        // Play sound effect with increasing hype
+        function playSound() {
+            if (soundLevel < 2) {
+                sounds[soundLevel].play();
+                soundLevel++;  // Increase sound level to make it more hyped
+            } else {
+                soundLevel = 0;  // Reset after maximum hype sound
+            }
+        }
+
+        // Shake the screen
+        function shakeScreen(element) {
+            element.classList.add('shake');
+            setTimeout(() => {
+                element.classList.remove('shake');
+}, 300);  // Duration of the shake
+        }
+
+        // Ultimate pump effect when reaching 100%
+        function ultimatePump(element) {
+            // Flash the background to emphasize the ultimate pump
+            element.classList.add('flash-background');
+        }
+    </script>
+
+</body>
+</html>
